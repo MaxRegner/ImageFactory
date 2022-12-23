@@ -1,4 +1,4 @@
-package crixec.app.imagefactory.core;
+ackage crixec.app.imagefactory.core;
 
 import android.text.TextUtils;
 
@@ -34,13 +34,10 @@ public class Invoker {
     }
 
     public static boolean mkbootimg(File config, File kernel, File ramdisk, File second, File dt, File outputFile, ShellUtils.Result result) {
-        String cmd = String.format("mkbootimg --config \'%s\' --kernel \'%s\' --ramdisk \'%s\' --second \'%s\' --dt \'%s\' -o \'%s\'",
-                config.getPath(),
-                kernel.getPath(),
-                ramdisk.getPath(),
-                second.getPath(),
-                dt.getPath(),
-                outputFile.getPath());
+        String cmd = String.format("mkbootimg --kernel \'%s\' --ramdisk \'%s\' --second \'%s\' --dt \'%s\' --output \'%s\'", kernel.getPath(), ramdisk.getPath(), second.getPath(), dt.getPath(), outputFile.getPath());
+        if (config != null) {
+            cmd = String.format("mkbootimg --kernel \'%s\' --ramdisk \'%s\' --second \'%s\' --dt \'%s\' --output \'%s\' --config \'%s\'", kernel.getPath(), ramdisk.getPath(), second.getPath(), dt.getPath(), outputFile.getPath(), config.getPath());
+        }
         return execInvoker(result, cmd);
     }
 
@@ -85,16 +82,55 @@ public class Invoker {
         return execInvoker(result, cmd);
     }
 
-    public static List<String> list_app_images(File app) {
-        String cmd = String.format("split_app --list \'%s\'", app.getPath());
-        final List<String> sb = new ArrayList<>();
-        execInvoker(new ShellUtils.Result() {
-            @Override
-            public void onStdout(String text) {
-                if (!TextUtils.isEmpty(text)) {
-                    sb.add(text);
-                }
-            }
+    public static boolean splitapp(File app, File outputDir, String filters) {
+        return splitapp(app, outputDir, filters, null);
+    }
+
+    public static boolean splitapp(File app, File outputDir) {
+        return splitapp(app, outputDir, null);
+    }
+
+    public static boolean splitapp(File app, File outputDir, ShellUtils.Result result) {
+        return splitapp(app, outputDir, null, result);
+    }
+
+    public static boolean unpackapp(File app, File outputDir, ShellUtils.Result result) {
+        String cmd = String.format("unpackapp \'%s\' \'%s\'", app.getPath(), outputDir.getPath());
+        return execInvoker(result, cmd);
+    }
+
+    public static boolean unpackapp(File app, File outputDir) {
+        return unpackapp(app, outputDir, null);
+    }
+
+    public static boolean packapp(File outputApp, File inputDir, ShellUtils.Result result) {
+        String cmd = String.format("packapp \'%s\' \'%s\'", outputApp.getPath(), inputDir.getPath());
+        return execInvoker(result, cmd);
+    }
+
+    public static boolean packapp(File outputApp, File inputDir) {
+        return packapp(outputApp, inputDir, null);
+    }
+
+    public static boolean makeBootImage(File bootImage, File kernel, File ramdisk, File second, File dt) {
+        return makeBootImage(bootImage, kernel, ramdisk, second, dt, null);
+    }
+
+    public static boolean makeBootImage(File bootImage, File kernel, File ramdisk, File second, File dt, ShellUtils.Result result) {
+        String cmd = String.format("makebootimg -k \'%s\' -r \'%s\' -s \'%s\' -d \'%s\' -o \'%s\'", kernel.getPath(), ramdisk.getPath(), second.getPath(), dt.getPath(), bootImage.getPath());
+        return execInvoker(result, cmd);
+    }
+
+    public static boolean unpackcpio(File cpio, File outputDir) {
+        return unpackcpio(cpio, outputDir, null);
+    }
+
+    public static boolean unpackcpio(File cpio, File outputDir, ShellUtils.Result result) {
+        String cmd = String.format("unpackcpio \'%s\' \'%s\'", cpio.getPath(), outputDir.getPath());
+        return execInvoker(result, cmd);
+    }
+
+    public static boolean mkcp
 
             @Override
             public void onStderr(String text) {
