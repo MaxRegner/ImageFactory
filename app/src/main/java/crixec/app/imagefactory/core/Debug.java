@@ -1,4 +1,4 @@
-package crixec.app.imagefactory.core;
+ackage crixec.app.imagefactory.core;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +49,41 @@ public class Debug {
         android.util.Log.e(TAG, text.toString());
         writeLog(TAG, text);
     }
+
+    private static void writeLog(String TAG, String text) {
+        if (fw != null) {
+            try {
+                fw.write(TAG + ": " + text + "\n");
+                fw.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void writeLog(String TAG, CharSequence text) {
+        if (fw != null) {
+            try {
+                fw.write(TAG + ": " + text + "\n");
+                fw.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static StringBuilder getContent() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            InputStream fis = new FileInputStream(LOG_FILE);
+            sb.append(FileUtils.readInputStream(fis));
+            fis.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return sb;
+    }
+}
 
     public static void writeLog(String TAG, CharSequence text) {
         if (fw != null) {
